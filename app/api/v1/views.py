@@ -30,5 +30,5 @@ class ItemAPI(Resource):
 api.add_resource(
     ItemAPI,
     '/items',
-    '/items/<int: id>'
+    '/items/<int:id>'
     )

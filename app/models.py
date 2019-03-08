@@ -1,5 +1,5 @@
 from datetime import datetime
-from . import db
+from . import db, bcrypt
 
 class User(db.Model):
     
@@ -12,8 +12,14 @@ class User(db.Model):
     createdon = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     items = db.relationship('Item', backref='createdby', lazy='dynamic')
 
+    def set_password(self, password):
+        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password_hash, password)
+
     def __repr__(self):
-        return '<User {}>'.formar(self.username)
+        return '<User {}>'.format(self.username)
 
 class Item(db.Model):
 
@@ -25,4 +31,4 @@ class Item(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
-        return '<Item {}>'.formar(self.itemname)
+        return '<Item {}>'.format(self.itemname)

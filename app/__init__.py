@@ -18,6 +18,9 @@ def create_app(config=Config):
     migrate.init_app(app, db)
     bcrypt.init_app(app)
 
+    from app.api.v1 import bp
+    app.register_blueprint(bp, url_prefix='/api/v1')
+
     return app
 
 from . import models

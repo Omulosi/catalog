@@ -45,12 +45,23 @@ class ItemAPI(Resource):
         data = item.serialize
         output['data'] = [data]
 
-
         return output, 201, {'Location': uri}
 
     def get(self, id=None):
         # Return item data
-        return {}
+        if id is None:
+            return {}
+        item_id = int(id)
+        item = Item.query.get(item_id)
+
+        output = {}
+        output['status'] = 200
+        output['data'] = [item.serialize]
+
+        return output
+
+
+
 
     def patch(self, id):
         # update item with given ID

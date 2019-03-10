@@ -3,6 +3,8 @@ from . import db, bcrypt
 
 class User(db.Model):
     
+    __tablename__ = 'users'
+    
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
@@ -23,12 +25,14 @@ class User(db.Model):
 
 class Item(db.Model):
 
+    __tablename__ = 'items'
+
     id = db.Column(db.Integer, primary_key=True)
     itemname = db.Column(db.String(64))
     description = db.Column(db.String(300))
     category = db.Column(db.String(64), index=True)
     createdon = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     @property
     def serialize(self):
@@ -36,7 +40,7 @@ class Item(db.Model):
                 'itemname': self.itemname,
                 'category': self.category,
                 'description': self.description,
-                'createdon': self.createdon.strftime('%a, %d %d %Y %H:%M %p')
+                'createdon': self.createdon.strftime('%a, %d %b %Y %H:%M %p')
                 }
 
     def __repr__(self):

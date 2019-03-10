@@ -2,7 +2,15 @@
 from flask import Blueprint
 from flask_restful import Api
 
-bp = Blueprint('v1', __name__)
+bp = Blueprint('catalog', __name__)
 api = Api(bp)
 
-from . import views
+from .views import ItemAPI
+
+# routes for item resource
+api.add_resource(
+    ItemAPI,
+    '/items',
+    '/items/<int:id>',
+    endpoint='item'
+    )

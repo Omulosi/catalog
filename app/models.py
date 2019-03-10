@@ -30,5 +30,14 @@ class Item(db.Model):
     createdon = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+    @property
+    def serialize(self):
+        return {'id': self.id,
+                'itemname': self.itemname,
+                'category': self.category,
+                'description': self.description,
+                'createdon': self.createdon.strftime('%a, %d %d %Y %H:%M %p')
+                }
+
     def __repr__(self):
         return '<Item {}>'.format(self.itemname)

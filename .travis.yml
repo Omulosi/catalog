@@ -1,0 +1,15 @@
+language: python
+python:
+        - "3.5.2"
+services:
+    - postgresql
+before_script:
+        - psql -c 'create database catalog_db;' -U postgres
+        - psql -c "create user jp with password 'cavier';" -U postgres
+install:
+        - pip install -r requirements.txt
+script:
+        - pytest
+after_success:
+        - coverage run -m pytest
+        - coverage report

@@ -36,14 +36,15 @@ class ItemAPI(Resource):
         item = Item(itemname=item_name, category=category, description=description)
         db.session.add(item)
         db.session.commit()
+        uri = url_for('catalog.item', id=item.id, _external=True)
 
         output = {}
         output['status'] = 201
+        output['message'] = 'Created a new item'
+        output['uri'] = uri
         data = item.serialize
-        data['message'] = 'Created a new item'
         output['data'] = [data]
 
-        uri = url_for('catalog.item', id=item.id, _external=True)
 
         return output, 201, {'Location': uri}
 

@@ -1,4 +1,6 @@
 import json
+import pytest
+
 
 # test data
 TEST_ITEM = {'itemname': 'ball', 'category': 'soccer',
@@ -12,10 +14,10 @@ def test_create_item(client):
     # Invalid requests
     # blank fields should not be in input data
     response = client.post('/api/v1/items', data={'itemname': '', 'category': '',
-                           'description':''})
+                                                  'description':''})
     assert response.status_code == 400
     response = client.post('/api/v1/items', data={'itemname':' ',
-                           'category':'   ', 'description':'   '})
+                                                  'category':'   ', 'description':'   '})
     assert response.status_code == 400
 
     # Test all three fields should be present
@@ -26,12 +28,6 @@ def test_create_item(client):
 
 
 def test_get_an_item(client):
-    # Initial request. No data yet but request successful
-    response = client.get('/api/v1/items/1')
-    assert response.status_code == 200
-    data = json.loads(response.data.decode('utf-8'))
-    assert len(data['data']) == 0
-
     # Add some test data to the database
     response = client.post('/api/v1/items', data=TEST_ITEM)
     assert response.status_code == 201
@@ -44,6 +40,7 @@ def test_get_an_item(client):
     assert len(item) > 0
 
     # test invalid requests
+
     # Non-existent id
     response = client.get('/api/v1/items/99999')
     assert response.status_code == 404
@@ -68,47 +65,77 @@ def test_get_item_collection(client):
     data = json.loads(response.data.decode('utf-8'))
     assert len(data['data']) == 2
 
-def test_patch_an_item(client):
+@pytest.mark.parametrize(('path', 'data', 'invalid_field', 'invalid_id'), (
+    ('/api/v1/items/1/itemname',
+     {'itemname': 'new-name'},
+     {'category': 'new-category'},
+     '/api/v1/items/9999/itemname'
+    ),
+    #
+    ('/api/v1/items/1/category',
+     {'category': 'new-category'},
+     {'itemname': 'new-name'},
+     '/api/v1/items/9999/category'
+    ),
+    #
+    ('/api/v1/items/1/description',
+     {'description': 'new-description'},
+     {'category': 'new-category'},
+     '/api/v1/items/9999/description'
+    )))
+def test_patch_an_item(client, path, data, invalid_field, invalid_id):
+    """ Tests for patch endpoint"""
     # Item does not exist
-    response = client.patch('/api/v1/items/1/itemname',
-                            data={'itemname':'new-name'})
+    response = client.patch(path, data=data)
     assert response.status_code == 404
+    assert b'status' in response.data
+    assert b'error' in response.data
 
     # create test data
     response = client.post('/api/v1/items', data=TEST_ITEM)
     assert response.status_code == 201
 
-    # patch an item
-    response = client.patch('/api/v1/items/1/itemname',
-                            data={'itemname':'bat'})
+    # patch an item: success
+    response = client.patch(path, data=data)
     assert response.status_code == 200
+    resp_data = json.loads(response.data.decode('utf-8'))['data'][0]
+    # check that the value in input data used to update the field is
+    # present in the json response of this request
+    assert True in [v in resp_data.values() for v in data.values()]
 
-    # Non-matching fields
-    response = client.patch('/api/v1/items/1/itemname',
-                            data={'category':'cricket'})
+    # Non-matching fields: error
+    response = client.patch(path, data=invalid_field)
     assert response.status_code == 400
+    assert b'status' in response.data
+    assert b'error' in response.data
 
     # Too many fields
-    response = client.patch('/api/v1/items/1/itemname',
-                            data={'category':'cricket',
-                                  'description': 'bowling game'})
+    response = client.patch(path, data={'category':'cricket',
+                                        'description': 'bowling game'})
     assert response.status_code == 400
+    assert b'status' in response.data
+    assert b'error' in response.data
 
-    response = client.patch('/api/v1/items/1/itemname',
+    response = client.patch(path,
                             data={'category':'cricket',
                                   'itemname': 'bat',
                                   'description': 'blowling game'})
     assert response.status_code == 400
+    assert b'status' in response.data
+    assert b'error' in response.data
 
     # Non-existent id
-    response = client.patch('/api/v1/items/1111/itemname',
-                            data={'itemname':'new-name'})
+    response = client.patch(invalid_id, data=data)
     assert response.status_code == 404
+    assert b'status' in response.data
+    assert b'error' in response.data
 
     # invalid update field
     response = client.patch('/api/v1/items/1/product',
-                            data={'itemname':'new-name'})
+                            data=data)
     assert response.status_code == 400
+    assert b'status' in response.data
+    assert b'error' in response.data
 
 def test_delete_item(client):
     # Item does not exist
@@ -122,7 +149,7 @@ def test_delete_item(client):
     # successful delete
     response = client.delete('/api/v1/items/1')
     assert response.status_code == 200
-    data = json.loads(response.data.decode('utf-8'))
+    data = json.loads(response.data.decode('utf-8'))['data']
     assert data[0]['id'] == 1
 
     # Non-existent id

@@ -11,6 +11,7 @@ from .views import ItemAPI
 api.add_resource(
     ItemAPI,
     '/items',
-    '/items/<int:id>',
+    '/items/<id>',
+    '/items/<id>/<field>',
     endpoint='item'
     )

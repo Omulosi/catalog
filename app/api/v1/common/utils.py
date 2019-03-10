@@ -17,3 +17,8 @@ def valid_category(category):
     if category:
         category = category.strip()
     return category if category else None
+
+def valid_description(description):
+    if description:
+        description = description.strip()
+    return description if description else None

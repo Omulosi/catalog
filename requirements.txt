@@ -7,7 +7,7 @@ certifi==2019.3.9
 cffi==1.12.2
 chardet==3.0.4
 Click==7.0
-coverage==4.5.2
+coverage==4.0.3
 Flask==1.0.2
 Flask-Bcrypt==0.7.1
 Flask-JWT-Extended==3.18.0
@@ -29,10 +29,12 @@ pycparser==2.19
 Pygments==2.3.1
 PyJWT==1.7.1
 pytest==4.3.0
+python-coveralls==2.9.1
 python-dateutil==2.8.0
 python-dotenv==0.10.1
 python-editor==1.0.4
 pytz==2018.9
+PyYAML==3.13
 relativetimebuilder==0.2.0
 requests==2.21.0
 six==1.12.0

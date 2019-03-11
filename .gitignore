@@ -6,3 +6,4 @@ instance/
 .env
 pytest.ini
 .coverage
+.pytest_cache

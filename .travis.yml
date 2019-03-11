@@ -4,6 +4,7 @@ python:
 env:
   global:
     - TEST_DATABASE_URL="postgresql+psycopg2://jp:cavier@localhost:5432/catalog_testdb"
+    - CODECOV_TOKEN="cc94657c-fd77-4294-ad33-5056ec5e45ae"
 services:
     - postgresql
 before_script:

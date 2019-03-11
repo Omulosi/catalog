@@ -6,10 +6,11 @@ services:
 before_script:
         - psql -c 'create database catalog_db;' -U postgres
         - psql -c "create user jp with password 'cavier';" -U postgres
-        - flask db upgrade
+        
 install:
         - pip install -r requirements.txt
 script:
+        - flask db upgrade
         - pytest
 after_success:
         - coverage run -m pytest

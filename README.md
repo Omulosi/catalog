@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/Omulosi/catalog.svg?branch=master)](https://travis-ci.org/Omulosi/catalog)
 
 Catalog App API
 ================

@@ -7,4 +7,3 @@ instance/
 pytest.ini
 .coverage
 .pytest_cache
-.coveralls.yml

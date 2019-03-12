@@ -12,9 +12,9 @@ from .common.errors import raise_error
 from .common.utils import valid_item_name, valid_category, valid_description
 
 parser = reqparse.RequestParser()
-parser.add_argument('itemname', type=str, help='item name not provided')
-parser.add_argument('category', type=str, help='category not provided')
-parser.add_argument('description', type=str, help='description not provided')
+parser.add_argument('itemname', type=str)
+parser.add_argument('category', type=str)
+parser.add_argument('description', type=str)
 
 class ItemAPI(Resource):
     

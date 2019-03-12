@@ -5,7 +5,8 @@ from flask_restful import Api
 bp = Blueprint('catalog', __name__)
 api = Api(bp)
 
-from .views import ItemAPI
+from .items import ItemAPI
+from .auth import SignUP, SignIn
 
 # routes for item resource
 api.add_resource(
@@ -15,3 +16,13 @@ api.add_resource(
     '/items/<id>/<field>',
     endpoint='item'
     )
+# Authenticaion routes
+api.add_resource(
+        SignUP,
+        '/auth/signup',
+        )
+
+api.add_resource(
+        SignIn,
+        '/auth/signin',
+        )

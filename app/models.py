@@ -6,11 +6,11 @@ class User(db.Model):
     __tablename__ = 'users'
     
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), index=True, unique=True)
+    username = db.Column(db.String(64), index=True, unique=True, default='')
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(140))
-    firstname = db.Column(db.String(64))
-    lastname = db.Column(db.String(64))
+    firstname = db.Column(db.String(64), default='')
+    lastname = db.Column(db.String(64), default='')
     createdon = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     items = db.relationship('Item', backref='createdby', lazy='dynamic')
 
@@ -19,6 +19,17 @@ class User(db.Model):
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
+
+    @property
+    def serialize(self):
+        return {'id': self.id,
+                'username': self.username,
+                'email': self.email,
+                'firstname': self.firstname,
+                'lastname': self.lastname,
+                'createdon': self.createdon.strftime('%a, %d %b %Y %H:%M %p')
+                }
+
 
     def __repr__(self):
         return '<User {}>'.format(self.username)

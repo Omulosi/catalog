@@ -26,3 +26,23 @@ def app():
 @pytest.fixture
 def client(app):
     return app.test_client()
+
+class AuthActions(object):
+    """
+    This class provides methods for authenticating users.
+    """
+    def __init__(self, client):
+        self._client = client
+
+    def signup(self, **kwargs):
+        return self._client.post('/api/v1/auth/signup', data=kwargs)
+
+    def login(self, **kwargs):
+        return self._client.post('/api/v1/auth/signin', data=kwargs)
+
+    def logout(self, **kwargs):
+        return self._client.post('/api/v1/auth/logout', data=kwargs)
+
+@pytest.fixture
+def auth(client):
+    return AuthActions(client)

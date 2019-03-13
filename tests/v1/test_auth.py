@@ -164,14 +164,14 @@ def test_token_refresh(client, auth):
     bad_token_header = make_token_header(bad_token)
 
 
-    response = client.post('/auth/refresh', headers=refresh_token_header)
+    response = client.post('/api/v1/auth/refresh', headers=refresh_token_header)
     assert response.status_code == 200
     data = json.loads(response.data.decode('utf-8'))['data'][0]
     assert 'access_token' in data
 
     # Return bad authorization header error for all other cases
-    response = client.post('/auth/refresh', headers=access_token_header)
+    response = client.post('/api/v1/auth/refresh', headers=access_token_header)
     assert response.status_code == 422
 
-    response = client.post('/auth/refresh', headers=bad_token_header)
+    response = client.post('/api/v1/auth/refresh', headers=bad_token_header)
     assert response.status_code == 422

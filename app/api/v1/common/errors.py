@@ -24,7 +24,7 @@ def invalid_token_callback(error_msg):
     Returns a custom 422 error message when a user
     provides an invalid token.
 
-    error: Bad authorizaation header
+    error: Bad authorization header
     """
     return raise_error(422, error_msg)
 

@@ -38,6 +38,7 @@ class AuthActions(object):
     def __init__(self, client):
         self._client = client
         self.access_token = None
+        self.refresh_token = None
 
     def signup(self, **kwargs):
         user_data = kwargs
@@ -46,6 +47,7 @@ class AuthActions(object):
         response =  self._client.post('/api/v1/auth/signup', data=user_data)
         data = json.loads(response.data.decode('utf-8'))
         self.access_token = data['data'][0]['access_token']
+        self.refresh_token = data['data'][0]['refresh_token']
 
         return response
 
@@ -56,6 +58,7 @@ class AuthActions(object):
         response =  self._client.post('/api/v1/auth/signin', data=user_data)
         data = json.loads(response.data.decode('utf-8'))
         self.access_token = data['data'][0]['access_token']
+        self.refresh_token = data['data'][0]['refresh_token']
 
         return response
 

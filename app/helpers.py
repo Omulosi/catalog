@@ -18,9 +18,12 @@ def _epoch_utc_to_datetime(epoch_utc):
     """
     Helper function for converting epoch timestamps (as stored in JWTs) into
     python datetime objects (which are easier to use with sqlalchemy).
+
+    :param epoch_utc: This param has type timestamp and is coverted to a 
+                      datetime object to match the Datetime type in the
+                      postgresql database column
     """
-    #return datetime.fromtimestamp(epoch_utc)
-    return epoch_utc
+    return datetime.fromtimestamp(epoch_utc)
 
 def add_token_to_database(encoded_token, identity_claim):
     """

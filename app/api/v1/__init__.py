@@ -6,7 +6,8 @@ bp = Blueprint('catalog', __name__)
 api = Api(bp)
 
 from .items import ItemAPI
-from .auth import SignUP, SignIn
+from .auth import SignUP, SignIn, RefreshToken
+from .tokens import Tokens
 
 # routes for item resource
 api.add_resource(
@@ -25,4 +26,15 @@ api.add_resource(
 api.add_resource(
         SignIn,
         '/auth/signin',
+        )
+
+api.add_resource(
+        RefreshToken,
+        '/auth/refresh',
+        )
+
+api.add_resource(
+        Tokens,
+        '/auth/tokens',
+        '/auth/tokens/<token_id>'
         )

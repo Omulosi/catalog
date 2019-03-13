@@ -11,6 +11,7 @@ class User(db.Model):
     password_hash = db.Column(db.String(140))
     firstname = db.Column(db.String(64), default='')
     lastname = db.Column(db.String(64), default='')
+    admin = db.Column(db.Boolean, default=False)
     createdon = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     items = db.relationship('Item', backref='createdby', lazy='dynamic')
 
@@ -27,6 +28,7 @@ class User(db.Model):
                 'email': self.email,
                 'firstname': self.firstname,
                 'lastname': self.lastname,
+                'admin': self.admin,
                 'createdon': self.createdon.strftime('%a, %d %b %Y %H:%M %p')
                 }
 
@@ -56,3 +58,26 @@ class Item(db.Model):
 
     def __repr__(self):
         return '<Item {}>'.format(self.itemname)
+
+
+class TokenBlacklist(db.Model):
+
+    __tablename__ = 'token_blacklist'
+
+    id = db.Column(db.Integer, primary_key=True)
+    jti = db.Column(db.String(50), nullable=False)
+    token_type = db.Column(db.String(10), nullable=False)
+    user_identity = db.Column(db.String(50), nullable=False)
+    revoked = db.Column(db.Boolean, nullable=False)
+    expires = db.Column(db.DateTime, nullable=False)
+
+    @property
+    def serialize(self):
+        return {
+            'token_id': self.id,
+            'jti': self.jti,
+            'token_type': self.token_type,
+            'user_identity': self.user_identity,
+            'revoked': self.revoked,
+            'expires': self.expires.strftime('%a, %d %b %Y %H:%M %p')
+        }

@@ -7,6 +7,8 @@ some common utility functions
 import re
 import string
 from flask import jsonify
+from app import jwt
+from app.helpers import is_token_revoked
 
 EMAIL_PATTERN = re.compile(r".+@[\w]+\.[\w]")
 
@@ -42,3 +44,8 @@ def valid_password(password):
     if special_char_present and digit_present:
         if len(password) >= 5:
             return True
+
+# Define our callback function to check if a token has been revoked or not
+@jwt.token_in_blacklist_loader
+def check_if_token_revoked(decoded_token):
+    return is_token_revoked(decoded_token)

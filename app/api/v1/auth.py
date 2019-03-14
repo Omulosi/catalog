@@ -24,13 +24,21 @@ from .common.errors import raise_error
 parser = reqparse.RequestParser()
 parser.add_argument('email', type=str) 
 parser.add_argument('password', type=str)
+parser.add_argument('admin', type=bool)
 
 class SignUP(Resource):
 
     def post(self):
         args = parser.parse_args()
-        email = args.get('email') or ''
-        password = args.get('password') or ''
+        email = args.get('email')
+        password = args.get('password') 
+        admin = args.get('admin')
+
+        if email is None:
+            return raise_error(400, "Missing 'email' in body")
+        if password is None:
+            return raise_error(400, "Missing 'password' in body")
+
 
         # validate input data
         if not valid_email(email):
@@ -44,7 +52,10 @@ class SignUP(Resource):
         if user is not None:
             return raise_error(400, "User already exists")
         #: set username to be same as email if it's not provided
+
         user = User(email=email, username=email)
+        if admin:
+            user.admin = admin
         user.set_password(password)
 
         db.session.add(user)

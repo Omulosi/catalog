@@ -53,7 +53,8 @@ class Item(db.Model):
                 'itemname': self.itemname,
                 'category': self.category,
                 'description': self.description,
-                'createdon': self.createdon.strftime('%a, %d %b %Y %H:%M %p')
+                'createdon': self.createdon.strftime('%a, %d %b %Y %H:%M %p'),
+                'createdby': self.user_id
                 }
 
     def __repr__(self):

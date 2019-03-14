@@ -1,7 +1,8 @@
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, reqparse, request
 from app.exceptions import TokenNotFound
-from app.helpers import get_user_tokens, revoke_token, unrevoke_token
+from app.helpers import get_user_tokens, revoke_token, unrevoke_token, prune_database
+from app.decorators import admin_required
 from .common.utils import valid_email, valid_password
 from .common.errors import raise_error
 
@@ -38,8 +39,22 @@ class Tokens(Resource):
         try:
             if revoke:
                 revoke_token(token_id, user_identity)
-                return  {'status': 200, 'message': "Token revoked"}
+                return  {'status': 200, 'message': "Token successfully revoked"}
             unrevoke_token(token_id, user_identity)
-            return  {'status': 200, 'message': "Token revoked"}
+            return  {'status': 200, 'message': "Token successfully revoked"}
         except TokenNotFound:
             return raise_error(404, 'The specified token was not found')
+    
+    @jwt_required
+    @admin_required
+    def delete(self):
+        """
+        Delete all expired tokens from blacklist database
+        """
+        prune_database()
+
+        return {
+                "status": 200,
+                "message": "Blacklist database successfully pruned"
+                }
+

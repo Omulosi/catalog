@@ -6,12 +6,14 @@ Implements various helpers
 
 """
 from datetime import datetime
+from functools import wraps
 
-from flask_jwt_extended import decode_token
+from flask import jsonify
+from flask_jwt_extended import decode_token, get_jwt_identity, verify_jwt_in_request
 from sqlalchemy.orm.exc import NoResultFound
 
 from .exceptions import TokenNotFound
-from .models import TokenBlacklist
+from .models import TokenBlacklist, User
 from . import db
 
 def _epoch_utc_to_datetime(epoch_utc):
@@ -104,3 +106,19 @@ def prune_database():
     for token in expired:
         db.session.delete(token)
     db.session.commit()
+
+def admin_required(fn):
+    """
+    Checks user is admin status is True before allowing access
+    to endpoint
+    """
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        verify_jwt_in_request()
+        user_email = get_jwt_identity()
+        user = User.query.filter_by(email=user_email).first()
+        if not user.admin:
+            return {'status': 403, 'message': 'Only admins can access this endpoint'}, 403
+        return fn(*args, **kwargs)
+    return wrapper
+

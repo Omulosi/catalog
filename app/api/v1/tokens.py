@@ -11,7 +11,12 @@ class Tokens(Resource):
     def get(self):
         user_identity = get_jwt_identity()
         all_tokens = get_user_tokens(user_identity)
-        response = [token.serialize for token in all_tokens]
+        data = [token.serialize for token in all_tokens]
+
+        response = {}
+        response['status'] = 201
+        response['data'] = data
+
         return response
 
     @jwt_required
@@ -33,8 +38,8 @@ class Tokens(Resource):
         try:
             if revoke:
                 revoke_token(token_id, user_identity)
-                return  raise_error(200, "Token revoked")
+                return  {'status': 200, 'message': "Token revoked"}
             unrevoke_token(token_id, user_identity)
-            return  raise_error(200, "Token unrevoked")
+            return  {'status': 200, 'message': "Token revoked"}
         except TokenNotFound:
             return raise_error(404, 'The specified token was not found')

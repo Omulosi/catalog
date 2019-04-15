@@ -6,18 +6,20 @@ RESTFul API for Item model
 """
 
 from flask_restful import Resource, reqparse, url_for
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.models import Item
 from app import db
 from .common.errors import raise_error
 from .common.utils import valid_item_name, valid_category, valid_description
 
 parser = reqparse.RequestParser()
-parser.add_argument('itemname', type=str, help='item name not provided')
-parser.add_argument('category', type=str, help='category not provided')
-parser.add_argument('description', type=str, help='description not provided')
+parser.add_argument('itemname', type=str)
+parser.add_argument('category', type=str)
+parser.add_argument('description', type=str)
 
 class ItemAPI(Resource):
     
+    @jwt_required
     def post(self):
         # create new item
         args = parser.parse_args()
@@ -47,6 +49,7 @@ class ItemAPI(Resource):
 
         return output, 201, {'Location': uri}
 
+    @jwt_required
     def get(self, id=None):
         # Return item data
         if id is None:
@@ -74,6 +77,7 @@ class ItemAPI(Resource):
 
         return output
 
+    @jwt_required
     def patch(self, id, field):
         # update item with given ID
         if not id.isnumeric():
@@ -122,6 +126,7 @@ class ItemAPI(Resource):
 
         return output
 
+    @jwt_required
     def delete(self, id):
         # Delete item with given ID
         if not id.isnumeric():

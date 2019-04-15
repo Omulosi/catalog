@@ -1,6 +1,8 @@
 
 from app import db
-from app.models import Item
+from app.models import Item, TokenBlacklist
+from app.helpers import add_token_to_database
+
 
 def test_create_items(app):
 
@@ -20,3 +22,4 @@ def test_create_items(app):
         assert item2.category == 'soccer'
         assert bool(item1.createdby) is False
         assert bool(item2.createdby) is False
+

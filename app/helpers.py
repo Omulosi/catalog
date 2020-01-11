@@ -2,7 +2,7 @@
 app.helpers
 ~~~~~~~~~~~
 
-Implements various helpers
+Implements various helper functions
 
 """
 from datetime import datetime
@@ -24,6 +24,7 @@ def _epoch_utc_to_datetime(epoch_utc):
                       postgresql database column
     """
     return datetime.fromtimestamp(epoch_utc)
+
 
 def add_token_to_database(encoded_token, identity_claim):
     """
@@ -67,6 +68,7 @@ def get_user_tokens(user_identity):
     given user
     """
     return TokenBlacklist.query.filter_by(user_identity=user_identity).all()
+
 
 def revoke_token(token_id, user):
     """
